@@ -54,7 +54,7 @@ h1{font-family:Orbitron;font-size:clamp(48px,7vw,100px);line-height:.9;margin:15
 .center{text-align:center}.bigTimer{font-family:Orbitron;font-size:28px;color:#ff71df}
 #game{margin-top:18px}.gameHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.stats{display:flex;gap:12px;flex-wrap:wrap}.stat{border:1px solid #49217a;padding:8px 13px;background:#070511;font-family:Orbitron}.stat b{color:var(--cyan)}
 .gameGrid{display:grid;grid-template-columns:1.6fr .8fr;gap:14px}
-.question{font-size:23px;line-height:1.4;color:#f1effb;white-space:pre-line}
+.question{font-size:21px;line-height:1.4;color:#f1effb;white-space:pre-line}
 .options{display:grid;gap:9px;margin-top:15px}.option{text-align:left;background:#070613;border:1px solid #4c237c;color:#e8e5f5;padding:12px}.option:hover{border-color:#d05cff;background:#100a22}.option.correct{border-color:var(--ok);color:var(--ok)}.option.wrong{border-color:var(--danger);color:var(--danger)}
 .answer{display:flex;gap:8px;margin-top:15px}.answer input{flex:1;background:#06050e;border:1px solid #4c237c;color:white;padding:12px}.answer button{white-space:nowrap}
 .hints{margin-top:15px;display:flex;gap:8px;flex-wrap:wrap}.hintBox{margin-top:10px;padding:10px;border-left:2px solid #ff31d8;background:rgba(255,49,216,.06);color:#ddd6e9}
@@ -67,13 +67,31 @@ h1{font-family:Orbitron;font-size:clamp(48px,7vw,100px);line-height:.9;margin:15
 footer{text-align:center;padding:35px;color:#756e8e;font-family:Orbitron;letter-spacing:4px}
 @media(max-width:900px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.gameGrid{grid-template-columns:1fr}.cyber-scene{height:280px}.team{gap:12px}.person{width:25px;height:75px}.clues{grid-template-columns:repeat(5,1fr)}}
 @media(max-width:560px){.app{padding:8px}.nav{display:none}.heroText{padding:18px}.cyber-scene{height:240px}.clues{grid-template-columns:repeat(2,1fr)}.gameHead{align-items:flex-start;flex-direction:column}}
+
+/* Final Treasure Found card — centered */
+#victoryModal,
+#treasureModal,
+.victory-modal,
+.treasure-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#victoryModal .modal-card,
+#treasureModal .modal-card,
+.victory-modal .card,
+.treasure-modal .card {
+  margin: 0 auto;
+  text-align: center;
+}
+
 </style>
 </head>
 <body>
 <div class="app">
   <header class="topbar">
     <div class="logo">CYPHER<span>-X</span></div>
-    <nav class="nav">
+    <select id="languageSelect" onchange="changeLanguage(this.value)" style="background:#070613;color:#fff;border:1px solid #8a2cff;padding:8px 10px;font-family:Rajdhani"><option value="en">🇬🇧 ENGLISH</option><option value="ml">🇮🇳 മലയാളം</option></select><nav class="nav">
       <button onclick="scrollToId('game')">Mission</button>
       <button onclick="scrollToId('leaderboard')">Leaderboard</button>
       <button onclick="showHow()">How to Play</button>
@@ -188,18 +206,19 @@ footer{text-align:center;padding:35px;color:#756e8e;font-family:Orbitron;letter-
 
 <script>
 const puzzles = [
- {title:"തുടക്കം", q:"എനിക്ക് നഗരങ്ങളുണ്ട്, പക്ഷേ വീടുകളില്ല. എനിക്ക് കാടുകളുണ്ട്, പക്ഷേ മരങ്ങളില്ല. എനിക്ക് നദികളുണ്ട്, പക്ഷേ വെള്ളമില്ല. ഞാൻ എന്താണ്?", answer:["map"], clue:"MAP", hints:["എന്നെ നിങ്ങളുടെ കയ്യിൽ പിടിക്കാം.","നിധി എവിടെയാണെന്ന് കാണിച്ചുതരാം, പക്ഷേ നിധി തന്നെ കാണിക്കില്ല."]},
- {title:"നിശ്ശബ്ദ സാക്ഷി", q:"എനിക്ക് വായില്ല, പക്ഷേ ഞാൻ സംസാരിക്കും. എനിക്ക് ചെവികളില്ല, പക്ഷേ ഞാൻ കേൾക്കും. എനിക്ക് ശരീരമില്ല, പക്ഷേ കാറ്റിനൊപ്പം ഞാൻ ജീവൻ നേടും. ഞാൻ എന്താണ്?", answer:["echo"], clue:"ECHO", hints:["നിങ്ങളുടെ ശബ്ദത്തിന് എന്നെ സൃഷ്ടിക്കാനാകും.","നിങ്ങൾ നൽകുന്നതിനെ ഞാൻ തിരികെ നൽകും."]},
- {title:"ഘടികാരം", q:"ഒരു ഘടികാരത്തിൽ സമയം 3:15 ആണ്. യഥാർത്ഥ ഘടികാരത്തിലേക്ക് നോക്കാതെ, മിനിറ്റ് സൂചി ഏത് അക്കത്തെയാണ് ചൂണ്ടുന്നത്? ആ സംഖ്യയിൽ നിന്ന് അക്ഷരമാലയിൽ 3 പടി മുന്നോട്ട് പോയാൽ ഏത് അക്ഷരം ലഭിക്കും?", answer:["f"], clue:"F", hints:["കണക്കാക്കേണ്ടത് മണിക്കൂർ സൂചിയല്ല.","3-ൽ നിന്ന് അക്ഷരമാലയിൽ 3 പടി മുന്നോട്ട് പോകൂ."]},
- {title:"നാല് അന്വേഷണകർ", q:"നാല് അന്വേഷണകർ രാത്രിയിൽ ഒരു പാലം കടക്കണം. അവരുടെ കൈയിൽ ഒരു ടോർച്ച് മാത്രമേയുള്ളൂ. ഒരേസമയം പരമാവധി രണ്ടുപേർക്ക് മാത്രമേ കടക്കാൻ കഴിയൂ. എല്ലാവരും പാലം കടക്കണം. അവരുടെ സമയങ്ങൾ 1, 2, 7, 10 മിനിറ്റുകളാണ്. എല്ലാവരെയും മറുകരയിലെത്തിക്കാൻ വേണ്ട ഏറ്റവും കുറഞ്ഞ സമയം എത്ര?", answer:["17","17 minutes"], clue:"17", hints:["ടോർച്ച് വേഗത്തിൽ നടക്കുന്നയാൾ തിരികെ കൊണ്ടുവരാം.","1 & 2 കടക്കുക, 1 തിരികെ വരുക, 7 & 10 കടക്കുക, 2 തിരികെ വരുക, വീണ്ടും 1 & 2 കടക്കുക."]},
- {title:"തകർന്ന സന്ദേശം", q:"തകർന്ന സന്ദേശം പൂർത്തിയാക്കുക: T H E / R E A / S U R / E. ഇതിൽ ഒളിഞ്ഞിരിക്കുന്ന ഒരൊറ്റ വാക്ക് ഏതാണ്?", answer:["treasure"], clue:"SPACE", hints:["കാണുന്ന അക്ഷരങ്ങളോടൊപ്പം കാണാത്ത ഇടവും ശ്രദ്ധിക്കുക.","നിങ്ങൾ അന്വേഷിക്കുന്ന വസ്തുവിന്റെ പേരാണ് ഉത്തരം."]},
- {title:"മൂന്ന് പെട്ടികൾ", q:"താഴെയുള്ള പ്രസ്താവനകളിൽ ഒന്ന് മാത്രം ശരിയാണ്. A: നിധി A പെട്ടിയിലാണ്. B: നിധി A പെട്ടിയിലല്ല. C: നിധി B പെട്ടിയിലല്ല. നിധി ഏത് പെട്ടിയിലാണ്?", answer:["b","box b","boxb"], clue:"B", hints:["ഓരോ പെട്ടിയും പരീക്ഷിച്ച് എത്ര പ്രസ്താവനകൾ ശരിയാകുന്നു എന്ന് നോക്കൂ.","കൃത്യമായി ഒരു പ്രസ്താവന മാത്രം ശരിയായിരിക്കണം."]},
- {title:"നമ്പർ ലോക്ക്", q:"2 → 6, 3 → 12, 4 → 20, 5 → 30, 6 → ? സംഖ്യകളിലെ മാതൃക കണ്ടെത്തി ? ന് പകരം വരേണ്ട സംഖ്യ കണ്ടെത്തുക.", answer:["42"], clue:"42", hints:["n എന്ന സംഖ്യയെ അതിന്റെ അടുത്ത സംഖ്യ കൊണ്ട് ഗുണിച്ച് നോക്കൂ.","6 × 7 എത്രയാണ്?"]},
- {title:"അദൃശ്യ പാത", q:"ഈ ഗ്രിഡിൽ START മുതൽ TREASURE വരെ തുറന്ന വഴിയിലൂടെ സഞ്ചരിക്കുക: S █ █ █ █ / . . . █ █ / █ . █ . █ / █ . . . . / █ █ █ █ T. → എന്ന നീക്കത്തിന് 1 എന്നും ↓ എന്ന നീക്കത്തിന് 2 എന്നും നൽകുക. ലഭിക്കുന്ന കോഡ് ഏതാണ്?", answer:["11221211"], clue:"11221211", hints:["തുറന്ന സെല്ലുകൾ മാത്രം ചേർത്ത് പാത കണ്ടെത്തുക.","ഓരോ നീക്കവും ക്രമത്തിൽ രേഖപ്പെടുത്തുക."]},
- {title:"പാത", q:"നിങ്ങൾ എത്ര കൂടുതൽ എടുത്തുകൊണ്ടുപോകുന്നുവോ, അത്രയും കൂടുതൽ പിന്നിൽ അവശേഷിപ്പിക്കുന്നു. അത് എന്താണ്?", answer:["footsteps","footstep","steps"], clue:"FOOTSTEPS", hints:["നിങ്ങൾ നടക്കുമ്പോഴെല്ലാം ഇത് ഉണ്ടാകുന്നു.","മഷിയില്ലാതെയും ഒരു പാത ഉണ്ടാക്കാം."]},
- {title:"അവസാന ബന്ധം", q:"ഈ സൂചനകൾ ഒരു വലിയ യഥാർത്ഥ ലോക നിർദ്ദേശത്തിന്റെ ഭാഗങ്ങളാണ്: MAP • ECHO • F • 17 • SPACE • B • 42 • 11221211 • FOOTSTEPS. ഇനി നിങ്ങളുടെ ടീം എന്ത് ചെയ്യണം?", answer:["connect","connect the clues","think","find the location"], clue:"CONNECT", hints:["സ്ക്രീനിൽ നേരിട്ട് ഒരു ഉത്തരം അന്വേഷിക്കേണ്ടതില്ല.","സൂചനകൾ തമ്മിൽ ബന്ധിപ്പിച്ച് ചുറ്റുപാടുകൾ പരിശോധിക്കുകയാണ് ഇനി നിങ്ങളുടെ ജോലി."]}
+ {en:{title:"Word Scramble",q:"Rearrange these letters to make a real word: O O K B",hints:["Think of something you can read.","The word starts with B."],answers:["book"]},ml:{title:"അക്ഷരക്കുഴപ്പം",q:"ഈ അക്ഷരങ്ങൾ ശരിയായ ക്രമത്തിൽ വെച്ച് ഒരു വാക്ക് ഉണ്ടാക്കുക: O O K B",hints:["വായിക്കാൻ ഉപയോഗിക്കുന്ന ഒരു വസ്തുവിനെക്കുറിച്ച് ചിന്തിക്കുക.","വാക്ക് B-യിൽ തുടങ്ങുന്നു."],answers:["book","ബുക്ക്"],},clue:"BOOK"},
+ {en:{title:"Everyday Science",q:"What do we use to see things clearly when it is very dark?",hints:["Think about a source of light.","You may carry it in your hand."],answers:["torch","flashlight","torch light"]},ml:{title:"ദൈനംദിന ശാസ്ത്രം",q:"വളരെ ഇരുട്ടായിരിക്കുമ്പോൾ കാര്യങ്ങൾ വ്യക്തമായി കാണാൻ നാം എന്താണ് ഉപയോഗിക്കുന്നത്?",hints:["ഒരു പ്രകാശ സ്രോതസിനെക്കുറിച്ച് ചിന്തിക്കുക.","കയ്യിൽ പിടിച്ച് ഉപയോഗിക്കാം."],answers:["torch","flashlight","ടോർച്ച്"]},clue:"LIGHT"},
+ {en:{title:"Riddle",q:"I have pages but I am not a tree. I have words but I cannot speak. What am I?",hints:["You can read me.","You may find me in a library."],answers:["book","a book"]},ml:{title:"കടങ്കഥ",q:"എനിക്ക് താളുകളുണ്ട്, പക്ഷേ ഞാൻ ഒരു മരമല്ല. എനിക്ക് വാക്കുകളുണ്ട്, പക്ഷേ എനിക്ക് സംസാരിക്കാൻ കഴിയില്ല. ഞാൻ എന്താണ്?",hints:["നിങ്ങൾക്ക് എന്നെ വായിക്കാം.","ലൈബ്രറിയിൽ എന്നെ കണ്ടെത്താം."],answers:["book","ഒരു പുസ്തകം","പുസ്തകം"]},clue:"BOOK"},
+ {en:{title:"Direction Challenge",q:"You are facing East. Walk forward, turn left, then turn left again. Which direction are you facing now?",hints:["From East, a left turn points North.","Turn left one more time."],answers:["south"]},ml:{title:"ദിശാ ചലഞ്ച്",q:"നിങ്ങൾ കിഴക്കോട്ട് നോക്കി നിൽക്കുന്നു. മുന്നോട്ട് നടക്കുക, ഇടത്തേക്ക് തിരിയുക, വീണ്ടും ഇടത്തേക്ക് തിരിയുക. ഇപ്പോൾ ഏത് ദിശയിലേക്കാണ് നോക്കുന്നത്?",hints:["കിഴക്കിൽ നിന്ന് ഇടത്തേക്ക് തിരിഞ്ഞാൽ വടക്ക്.","വീണ്ടും ഇടത്തേക്ക് തിരിയുക."],answers:["south","തെക്ക്"]},clue:"SOUTH"},
+ {en:{title:"Observation Logic",q:"A clock has three hands: hour, minute and second. Which hand moves the fastest?",hints:["Think about which hand completes a full round first.","The second hand moves once around the clock in one minute."],answers:["second hand","seconds hand"]},ml:{title:"നിരീക്ഷണ ലോജിക്",q:"ഒരു ഘടികാരത്തിൽ മണിക്കൂർ, മിനിറ്റ്, സെക്കൻഡ് എന്നിങ്ങനെ മൂന്ന് സൂചികളുണ്ട്. ഇതിൽ ഏറ്റവും വേഗത്തിൽ ചലിക്കുന്നത് ഏത്?",hints:["ഏത് സൂചിയാണ് ആദ്യം ഒരു പൂർണ്ണ വട്ടം പൂർത്തിയാക്കുന്നതെന്ന് ചിന്തിക്കുക.","സെക്കൻഡ് സൂചി ഒരു മിനിറ്റിൽ ഒരു പൂർണ്ണ വട്ടം ചുറ്റും."],answers:["second hand","സെക്കൻഡ് സൂചി"]},clue:"SECOND"},
+ {en:{title:"Nature & Knowledge",q:"Which animal is commonly known for carrying its home on its back?",hints:["It moves slowly.","Its home is a hard shell."],answers:["snail","turtle","tortoise"]},ml:{title:"പ്രകൃതിയും അറിവും",q:"തന്റെ വീട് പുറത്ത് ചുമന്ന് നടക്കുന്ന ജീവിയായി സാധാരണയായി അറിയപ്പെടുന്നത് ഏത്?",hints:["ഇത് പതുക്കെ സഞ്ചരിക്കുന്നു.","അതിന്റെ പുറത്ത് ഒരു കട്ടിയുള്ള പുറംതോട് ഉണ്ട്."],answers:["snail","turtle","tortoise","ഒച്ച","ആമ"]},clue:"SHELL"},
+ {en:{title:"Simple Code",q:"In a secret code, A=1, B=2, C=3. What letter is 4?",hints:["Count the alphabet from A.","A is 1, B is 2, C is 3."],answers:["d"]},ml:{title:"ലളിതമായ കോഡ്",q:"ഒരു രഹസ്യ കോഡിൽ A=1, B=2, C=3. എന്നാൽ 4 ഏത് അക്ഷരമാണ്?",hints:["A മുതൽ അക്ഷരമാല എണ്ണുക.","A=1, B=2, C=3."],answers:["d","ഡി"]},clue:"D"},
+ {en:{title:"Real-Life Choice",q:"You find a lost water bottle at school. What is the best thing to do?",hints:["Think about doing the honest thing.","You should help the owner get it back."],answers:["give it to a teacher","take it to a teacher","give it to the office","hand it to a teacher","report it"]},ml:{title:"യഥാർത്ഥ ജീവിതത്തിലെ തിരഞ്ഞെടുപ്പ്",q:"സ്കൂളിൽ ഒരു നഷ്ടപ്പെട്ട വെള്ളക്കുപ്പി കണ്ടാൽ ഏറ്റവും നല്ലത് എന്താണ് ചെയ്യുന്നത്?",hints:["സത്യസന്ധമായ ഒരു പ്രവൃത്തിയെക്കുറിച്ച് ചിന്തിക്കുക.","ഉടമയ്ക്ക് അത് തിരികെ ലഭിക്കാൻ സഹായിക്കുക."],answers:["അധ്യാപകനെ ഏൽപ്പിക്കുക","ടീച്ചറെ ഏൽപ്പിക്കുക","ഓഫീസിൽ ഏൽപ്പിക്കുക","അധ്യാപകനെ അറിയിക്കുക"]},clue:"TRUST"},
+ {en:{title:"Visual Imagination",q:"You have a square sheet of paper. Fold it once in half. How many layers of paper are there?",hints:["One fold puts one half over the other.","Count the layers after the fold."],answers:["2","two"]},ml:{title:"ദൃശ്യചിന്ത",q:"ഒരു ചതുരക്കടലാസ് ഒരിക്കൽ പകുതിയായി മടക്കുന്നു. മടക്കിയ ശേഷം എത്ര പാളികളായിരിക്കും?",hints:["ഒരു പകുതി മറ്റേ പകുതിയുടെ മുകളിൽ വരും.","മടക്കിയ ശേഷമുള്ള പാളികൾ എണ്ണുക."],answers:["2","രണ്ട്","2 layers"]},clue:"TWO"},
+ {en:{title:"Final Detective Connection",q:"Your clues are BOOK, LIGHT, BOOK, SOUTH, SECOND, SHELL, D, TRUST, TWO. What should your team do before searching for the treasure?",hints:["Do not search randomly.","Discuss the clues, find the common idea, and check the safe real-world area."],answers:["connect the clues","discuss the clues","think and connect","connect","analyze the clues","find the connection"]},ml:{title:"അവസാന ഡിറ്റക്ടീവ് ബന്ധം",q:"നിങ്ങളുടെ സൂചനകൾ BOOK, LIGHT, BOOK, SOUTH, SECOND, SHELL, D, TRUST, TWO ആണ്. നിധി തിരയുന്നതിന് മുമ്പ് ടീം എന്ത് ചെയ്യണം?",hints:["വെറുതെ എവിടെയും തിരയരുത്.","സൂചനകൾ ചർച്ച ചെയ്ത് പൊതുവായ ബന്ധം കണ്ടെത്തി സുരക്ഷിതമായ സ്ഥലത്ത് പരിശോധിക്കുക."],answers:["സൂചനകൾ ബന്ധിപ്പിക്കുക","സൂചനകൾ ചർച്ച ചെയ്യുക","ചിന്തിച്ച് ബന്ധിപ്പിക്കുക","ബന്ധിപ്പിക്കുക","സൂചനകൾ വിശകലനം ചെയ്യുക"]},clue:"CONNECT"}
 ];
 
+let language="en";
 let state={started:false,index:0,score:10000,clues:[],hintUsed:[],seconds:3600,team:"",players:[],timer:null,finished:false};
 
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
@@ -224,15 +243,16 @@ function startTimer(){
 }
 function renderTimer(){let m=Math.floor(state.seconds/60),s=state.seconds%60;document.getElementById("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
 function renderPuzzle(){
- const p=puzzles[state.index];
- document.getElementById("missionTitle").textContent="Mission "+String(state.index+1).padStart(2,"0");
- document.getElementById("qTitle").textContent="Puzzle "+String(state.index+1).padStart(2,"0")+" // "+p.title;
- document.getElementById("question").textContent=p.q.replace(/\\n/g," ");
+ const p=puzzles[state.index], t=p[language];
+ document.getElementById("missionTitle").textContent=(language==="ml"?"മിഷൻ ":"Mission ")+String(state.index+1).padStart(2,"0");
+ document.getElementById("qTitle").textContent=(language==="ml"?"പസിൽ ":"Puzzle ")+String(state.index+1).padStart(2,"0")+" // "+t.title;
+ document.getElementById("question").textContent=t.q.replace(/\\n/g," ");
  document.getElementById("answerInput").value="";
  document.getElementById("feedback").innerHTML="";
  document.getElementById("hintArea").innerHTML="";
  document.getElementById("options").innerHTML="";
  document.getElementById("clueCount").textContent=state.clues.length+"/10";
+ document.getElementById("answerInput").placeholder=language==="ml"?"നിങ്ങളുടെ ഉത്തരം ടൈപ്പ് ചെയ്യുക...":"Type your answer...";
  renderClues();
 }
 function normalize(v){return v.toLowerCase().trim().replace(/[^\w\s]/g,"").replace(/\s+/g," ")}
@@ -240,7 +260,7 @@ function submitAnswer(){
  if(!state.started||state.finished)return;
  const p=puzzles[state.index], v=normalize(document.getElementById("answerInput").value);
  if(!v)return;
- if(p.answer.some(a=>normalize(a)===v)){
+ if(p.answers.some(a=>normalize(a)===v)){
    document.getElementById("feedback").innerHTML='<p class="success">✓ CORRECT — EVIDENCE RECOVERED: '+esc(p.clue)+'</p>';
    if(!state.clues.includes(p.clue))state.clues.push(p.clue);
    document.getElementById("score").textContent=state.score;
@@ -256,13 +276,13 @@ function submitAnswer(){
  }
 }
 function useHint(n){
- const p=puzzles[state.index];
- if(state.hintUsed.includes(state.index+"-"+n)){toast("Hint already used.");return}
+ const p=puzzles[state.index], t=p[language];
+ if(state.hintUsed.includes(state.index+"-"+n)){toast(language==="ml"?"ഈ സൂചന ഇതിനകം ഉപയോഗിച്ചു.":"Hint already used.");return}
  state.hintUsed.push(state.index+"-"+n);
  const cost=n===0?100:250;state.score=Math.max(0,state.score-cost);
  document.getElementById("score").textContent=state.score;
- document.getElementById("hintArea").innerHTML+='<div class="hintBox"><b>HINT '+(n+1)+"</b> — "+esc(p.hints[n])+"</div>";
- addChat("SYSTEM","Hint "+(n+1)+" used. -"+cost+" points.");
+ document.getElementById("hintArea").innerHTML+='<div class="hintBox"><b>'+(language==="ml"?"സൂചന ":"HINT ")+(n+1)+"</b> — "+esc(t.hints[n])+"</div>";
+ addChat("SYSTEM",(language==="ml"?"സൂചന ":"Hint ")+(n+1)+" used. -"+cost+" points.");
 }
 function renderClues(){
  const el=document.getElementById("clues");el.innerHTML="";
@@ -300,7 +320,8 @@ function openAnalysis(){
 }
 function claimTreasure(){
  const code=prompt("Enter the physical treasure's final verification code:");
- if(code&&normalize(code)==="cypherx"){clearInterval(state.timer);toast("TREASURE VERIFIED — VICTORY!");showVictory()}
+ const finalCode=localStorage.getItem("cypherxFinalCode")||"CYPHERX";
+  if(code&&normalize(code)===normalize(finalCode)){clearInterval(state.timer);toast("TREASURE VERIFIED — VICTORY!");showVictory()}
  else if(code!==null)toast("Verification failed. Keep investigating.");
 }
 function showVictory(){
@@ -316,6 +337,7 @@ function sendChat(){
 }
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display="none",2600)}
 function showHow(){alert("CYPHER-X is a digital-to-physical treasure hunt. Four players solve 10 logic puzzles. Each correct answer becomes evidence. After puzzle 10, the website stops giving directions: the team must connect the clues and find the real-world treasure placed by the organizer. Hints and wrong answers reduce score.")}
+function changeLanguage(lang){language=lang;renderPuzzle();}
 function saveScore(){
  let rows=JSON.parse(localStorage.getItem("cypherxScores")||"[]");
  rows.push({team:state.team,score:state.score,date:new Date().toLocaleString()});
