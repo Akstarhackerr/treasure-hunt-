@@ -51,6 +51,8 @@ h1{font-family:Orbitron;font-size:clamp(48px,7vw,100px);line-height:.9;margin:15
 .setup{grid-column:span 1}.brief{grid-column:span 1}.rules{grid-column:span 1}
 .inputs{display:grid;gap:10px}.inputs label{color:#aaa5c0;font-size:13px;text-transform:uppercase;letter-spacing:1px}.inputs input{width:100%;margin-top:5px;background:#070613;border:1px solid #4d237e;color:white;padding:10px 12px;outline:none}.inputs input:focus{border-color:#e88cff;box-shadow:0 0 10px rgba(168,85,255,.25)}
 .playerRow{display:flex;align-items:center;gap:8px}.playerRow label{flex:1}.playerTag{display:inline-block;color:#7ef9ff;font-family:Orbitron;font-size:10px;letter-spacing:1px;margin-bottom:2px}.addPlayerBtn{width:100%;min-height:48px;border:1px dashed #8a2cff;background:rgba(122,23,255,.08);color:#d9b9ff;font-family:Orbitron;text-transform:uppercase;letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:9px;transition:.2s}.addPlayerBtn:hover{border-color:#ff31d8;color:#fff;background:rgba(255,49,216,.08);box-shadow:0 0 18px rgba(168,85,255,.2)}.addIcon{font-size:24px;line-height:1;color:#7ef9ff}.playerCount{font-size:11px;color:#756e8e;letter-spacing:1px;text-align:right}
+.team .person{transition:transform .25s ease,filter .25s ease,box-shadow .25s ease,opacity .25s ease}.team .person.active{filter:drop-shadow(0 0 9px var(--cyan));box-shadow:0 0 20px rgba(126,249,255,.7);transform:translateY(-4px) scale(1.05)}.team .person.glow{filter:drop-shadow(0 0 14px #ff31d8);box-shadow:0 0 28px rgba(255,49,216,.9);transform:translateY(-7px) scale(1.1)}.team .person:nth-child(5){opacity:.28}.team .person:nth-child(5).active{opacity:1}.team .person:nth-child(2){transition-delay:.03s}.team .person:nth-child(3){transition-delay:.06s}.team .person:nth-child(4){transition-delay:.09s}.team .person:nth-child(5){transition-delay:.12s}
+
 .rules li{margin:9px 0;color:#d4d0e5}
 .center{text-align:center}.bigTimer{font-family:Orbitron;font-size:28px;color:#ff71df}
 #game{margin-top:18px}.gameHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.stats{display:flex;gap:12px;flex-wrap:wrap}.stat{border:1px solid #49217a;padding:8px 13px;background:#070511;font-family:Orbitron}.stat b{color:var(--cyan)}
@@ -104,13 +106,13 @@ footer{text-align:center;padding:35px;color:#756e8e;font-family:Orbitron;letter-
       <div class="kicker">Digital Treasure Hunt // Protocol 01</div>
       <h1>CYPHER-X</h1>
       <div class="tag">THINKING BEYOND CODE</div>
-      <p>Four minds. Ten logical trials. One real-world treasure. Solve the digital investigation, connect the evidence, then leave the screen and find what the clues are pointing to.</p>
+      <p>Five minds. Ten logical trials. One real-world treasure. Solve the digital investigation, connect the evidence, then leave the screen and find what the clues are pointing to.</p>
       <button class="btn" onclick="document.getElementById('teamSetup').scrollIntoView({behavior:'smooth'})">Enter The Hunt</button>
     </div>
     <div class="cyber-scene" aria-label="cyberpunk scene">
       <div class="beam"></div><div class="glitch"></div>
       <div class="city"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="team"><div class="person"></div><div class="person"></div><div class="person"></div><div class="person"></div></div>
+      <div class="team" id="teamVisual"><div class="person active"></div><div class="person"></div><div class="person"></div><div class="person"></div><div class="person"></div></div>
     </div>
   </section>
 
@@ -122,7 +124,7 @@ footer{text-align:center;padding:35px;color:#756e8e;font-family:Orbitron;letter-
           <label><span class="playerTag">PLAYER 01</span><input id="p1" placeholder="Enter player name"></label>
         </div>
         <button type="button" class="addPlayerBtn" id="addPlayerBtn" onclick="addPlayer()"><span class="addIcon">＋</span><span>ADD PLAYER</span></button>
-        <div class="playerCount" id="playerCount">1 / 4 PLAYERS</div>
+        <div class="playerCount" id="playerCount">1 / 5 PLAYERS</div>
         <label>TEAM NAME<input id="teamName" placeholder="Enter team name"></label>
       </div>
       <br><button type="button" class="btn" onclick="return startGame()">Start Mission</button>
@@ -137,7 +139,7 @@ footer{text-align:center;padding:35px;color:#756e8e;font-family:Orbitron;letter-
     <div class="panel rules">
       <h2 class="title">How To Play</h2>
       <ul>
-        <li>Team contains exactly 4 people.</li>
+        <li>Team contains exactly 5 people.</li>
         <li>No hacking. No source-code tricks.</li>
         <li>Use logic, observation and teamwork.</li>
         <li>Hints cost score.</li>
@@ -232,27 +234,41 @@ function addPlayer(){
   if(!container || !addBtn) return false;
   const rows=container.querySelectorAll(".playerRow");
   const next=rows.length+1;
-  if(next>4){ toast("Team already has 4 players."); return false; }
+  if(next>5){ toast("Team already has 5 players."); return false; }
   const row=document.createElement("div");
   row.className="playerRow";
   row.dataset.player=String(next);
   row.innerHTML='<label><span class="playerTag">PLAYER '+String(next).padStart(2,"0")+'</span><input id="p'+next+'" placeholder="Enter player name"></label>';
   container.insertBefore(row,addBtn);
-  if(count) count.textContent=next+" / 4 PLAYERS";
-  if(next===4){ addBtn.innerHTML='<span class="addIcon">✓</span><span>4 PLAYERS ADDED</span>'; addBtn.disabled=true; addBtn.style.opacity=".5"; addBtn.style.cursor="not-allowed"; }
+  if(count) count.textContent=next+" / 5 PLAYERS";
+  updateTeamGlow(next);
+  if(next===5){ addBtn.innerHTML='<span class="addIcon">✓</span><span>5 PLAYERS ADDED</span>'; addBtn.disabled=true; addBtn.style.opacity=".5"; addBtn.style.cursor="not-allowed"; }
   const input=row.querySelector("input");
   if(input) input.focus();
   return false;
 }
+function updateTeamGlow(count){
+  const people=document.querySelectorAll("#teamVisual .person");
+  people.forEach((person,i)=>{
+    person.classList.toggle("active", i < count);
+    person.classList.remove("glow");
+  });
+  const newest=people[count-1];
+  if(newest){
+    newest.classList.add("glow");
+    setTimeout(()=>newest.classList.remove("glow"),700);
+  }
+}
+
 function startGame(){
   try{
-    const ids=["p1","p2","p3","p4","teamName"];
+    const ids=["p1","p2","p3","p4","p5","teamName"];
     const vals=ids.map(id=>{
       const el=document.getElementById(id);
       return el ? String(el.value||"").trim() : "";
     });
     if(vals.some(v=>!v)){
-      toast("Enter all 4 player names and a team name.");
+      toast("Enter all 5 player names and a team name.");
       return false;
     }
     state.started=true;
@@ -263,7 +279,7 @@ function startGame(){
     state.hintUsed=[];
     state.seconds=3600;
     state.team=vals[4];
-    state.players=vals.slice(0,4);
+    state.players=vals.slice(0,5);
 
     const game=document.getElementById("game");
     const setup=document.getElementById("teamSetup");
@@ -407,7 +423,7 @@ function sendChat(){
  addChat(state.players[0]||"PLAYER",v);input.value="";
 }
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display="none",2600)}
-function showHow(){alert("CYPHER-X is a digital-to-physical treasure hunt. Four players solve 10 logic puzzles. Each correct answer becomes evidence. After puzzle 10, the website stops giving directions: the team must connect the clues and find the real-world treasure placed by the organizer. Hints and wrong answers reduce score.")}
+function showHow(){alert("CYPHER-X is a digital-to-physical treasure hunt. Five players solve 10 logic puzzles. Each correct answer becomes evidence. After puzzle 10, the website stops giving directions: the team must connect the clues and find the real-world treasure placed by the organizer. Hints and wrong answers reduce score.")}
 function changeLanguage(lang){language=lang;renderPuzzle();}
 function saveScore(){
  let rows=JSON.parse(localStorage.getItem("cypherxScores")||"[]");
