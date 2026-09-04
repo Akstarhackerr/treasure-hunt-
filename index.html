@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CYPHER-X — The Last Treasure</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+:root{
+  --bg:#03040a; --panel:rgba(9,7,25,.88); --line:#8a2cff; --cyan:#7ef9ff;
+  --purple:#a855ff; --pink:#ff31d8; --white:#f7f7ff; --muted:#a9a5bf;
+  --ok:#7cffb2; --danger:#ff5e8e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#020309;color:var(--white);font-family:Rajdhani,Arial,sans-serif;min-height:100%}
+body{
+  background:
+    radial-gradient(circle at 75% 10%,rgba(115,30,255,.25),transparent 30%),
+    radial-gradient(circle at 20% 60%,rgba(255,0,200,.10),transparent 28%),
+    linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px),#020309;
+  background-size:auto,auto,40px 40px,40px 40px;
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(160,80,255,.025) 4px);z-index:99}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.app{max-width:1400px;margin:auto;padding:16px}
+.topbar{height:64px;border:1px solid rgba(168,85,255,.55);background:rgba(3,3,12,.82);display:flex;align-items:center;justify-content:space-between;padding:8px 18px;clip-path:polygon(0 0,100% 0,100% 75%,98% 100%,2% 100%,0 75%)}
+.logo{font-family:Orbitron;font-weight:900;letter-spacing:4px;font-size:22px}.logo span{color:var(--pink)}
+.nav{display:flex;gap:24px}.nav button{background:none;border:0;color:#ddd6f7;text-transform:uppercase;letter-spacing:2px}.nav button:hover{color:var(--cyan)}
+.hero{min-height:430px;margin-top:18px;display:grid;grid-template-columns:1fr 1.25fr;gap:20px;align-items:center}
+.heroText{padding:35px}
+.kicker{color:var(--cyan);letter-spacing:5px;text-transform:uppercase;font-weight:700}
+h1{font-family:Orbitron;font-size:clamp(48px,7vw,100px);line-height:.9;margin:15px 0;background:linear-gradient(110deg,#fff,#b9b7ff,#ff38db);-webkit-background-clip:text;color:transparent;letter-spacing:-3px}
+.tag{font-family:Orbitron;letter-spacing:6px;color:#ff9bf0;font-size:clamp(12px,2vw,18px)}
+.heroText p{font-size:20px;color:#d7d3e8;max-width:600px}
+.cyber-scene{height:380px;position:relative;border:1px solid rgba(168,85,255,.5);overflow:hidden;background:radial-gradient(circle at 50% 70%,rgba(115,30,255,.35),transparent 25%),linear-gradient(160deg,#08051b,#02030a)}
+.city{position:absolute;inset:auto 0 0;height:75%;display:flex;align-items:end;gap:5px;justify-content:center}
+.city i{display:block;width:7%;background:linear-gradient(#2c145c,#080815);border-top:1px solid #a855ff;box-shadow:0 0 18px rgba(168,85,255,.4)}
+.city i:nth-child(1){height:40%}.city i:nth-child(2){height:65%}.city i:nth-child(3){height:48%}.city i:nth-child(4){height:85%}.city i:nth-child(5){height:58%}.city i:nth-child(6){height:76%}.city i:nth-child(7){height:50%}.city i:nth-child(8){height:70%}
+.beam{position:absolute;width:150%;height:3px;background:#fff;box-shadow:0 0 15px 4px #8d38ff;transform:rotate(-29deg);top:35%;left:-15%}
+.team{position:absolute;bottom:5%;left:50%;transform:translateX(-50%);display:flex;gap:28px;align-items:end}
+.person{width:34px;height:100px;background:linear-gradient(#111,#050507);border-radius:45% 45% 10% 10%;box-shadow:0 0 12px rgba(126,249,255,.3);position:relative}.person:before{content:"";width:30px;height:30px;border-radius:50%;background:#050508;position:absolute;left:2px;top:-23px;border:1px solid #8d38ff}
+.glitch{position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 30%,rgba(255,0,220,.07) 30% 31%,transparent 31% 60%,rgba(0,255,255,.05) 60% 61%,transparent 61%);mix-blend-mode:screen}
+.btn{border:1px solid #d05cff;background:linear-gradient(90deg,rgba(122,23,255,.35),rgba(255,20,190,.18));color:#fff;padding:13px 26px;text-transform:uppercase;letter-spacing:2px;font-family:Orbitron;box-shadow:0 0 18px rgba(168,85,255,.25);clip-path:polygon(6% 0,94% 0,100% 35%,100% 65%,94% 100%,6% 100%,0 65%,0 35%)}.btn:hover{box-shadow:0 0 28px rgba(255,49,216,.55);transform:translateY(-1px)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.panel{border:1px solid rgba(168,85,255,.5);background:var(--panel);padding:18px;position:relative;box-shadow:inset 0 0 35px rgba(82,20,160,.07)}
+.panel:after{content:"";position:absolute;top:-1px;left:15%;right:15%;height:1px;background:#d05cff;box-shadow:0 0 10px #d05cff}
+.title{font-family:Orbitron;color:#e8caff;letter-spacing:2px;text-transform:uppercase;margin:0 0 14px}
+.setup{grid-column:span 1}.brief{grid-column:span 1}.rules{grid-column:span 1}
+.inputs{display:grid;gap:8px}.inputs label{color:#aaa5c0;font-size:13px;text-transform:uppercase;letter-spacing:1px}.inputs input{background:#070613;border:1px solid #4d237e;color:white;padding:10px 12px;outline:none}.inputs input:focus{border-color:#e88cff;box-shadow:0 0 10px rgba(168,85,255,.25)}
+.rules li{margin:9px 0;color:#d4d0e5}
+.center{text-align:center}.bigTimer{font-family:Orbitron;font-size:28px;color:#ff71df}
+#game{margin-top:18px}.gameHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.stats{display:flex;gap:12px;flex-wrap:wrap}.stat{border:1px solid #49217a;padding:8px 13px;background:#070511;font-family:Orbitron}.stat b{color:var(--cyan)}
+.gameGrid{display:grid;grid-template-columns:1.6fr .8fr;gap:14px}
+.question{font-size:23px;line-height:1.4;color:#f1effb;white-space:pre-line}
+.options{display:grid;gap:9px;margin-top:15px}.option{text-align:left;background:#070613;border:1px solid #4c237c;color:#e8e5f5;padding:12px}.option:hover{border-color:#d05cff;background:#100a22}.option.correct{border-color:var(--ok);color:var(--ok)}.option.wrong{border-color:var(--danger);color:var(--danger)}
+.answer{display:flex;gap:8px;margin-top:15px}.answer input{flex:1;background:#06050e;border:1px solid #4c237c;color:white;padding:12px}.answer button{white-space:nowrap}
+.hints{margin-top:15px;display:flex;gap:8px;flex-wrap:wrap}.hintBox{margin-top:10px;padding:10px;border-left:2px solid #ff31d8;background:rgba(255,49,216,.06);color:#ddd6e9}
+.clues{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.clue{min-height:68px;border:1px solid #38205c;background:#070612;padding:8px;text-align:center}.clue.done{border-color:#55f8ff;box-shadow:0 0 12px rgba(85,248,255,.12)}.clue small{display:block;color:#827b9e}.clue strong{font-family:Orbitron;color:#d7c5ff}
+.chat{height:150px;overflow:auto;background:#05040c;border:1px solid #2d1a49;padding:10px;font-size:14px}.chat p{margin:4px 0}.chat span{color:#7ef9ff}
+.final{margin-top:14px}.finalBox{text-align:center;padding:35px;border:1px solid #b23dff;background:radial-gradient(circle,rgba(168,85,255,.18),transparent 60%),#06040e}.finalBox h2{font-family:Orbitron;font-size:38px;color:#fff}.finalClues{font-family:Orbitron;letter-spacing:2px;color:#d8caff;line-height:2}
+.locked{opacity:.4;filter:grayscale(1)}
+.success{color:var(--ok);font-family:Orbitron}.error{color:var(--danger)}
+.toast{position:fixed;right:18px;bottom:18px;z-index:100;padding:14px 18px;border:1px solid #d05cff;background:#080512;box-shadow:0 0 25px rgba(168,85,255,.3);display:none}
+footer{text-align:center;padding:35px;color:#756e8e;font-family:Orbitron;letter-spacing:4px}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.gameGrid{grid-template-columns:1fr}.cyber-scene{height:280px}.team{gap:12px}.person{width:25px;height:75px}.clues{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:560px){.app{padding:8px}.nav{display:none}.heroText{padding:18px}.cyber-scene{height:240px}.clues{grid-template-columns:repeat(2,1fr)}.gameHead{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="logo">CYPHER<span>-X</span></div>
+    <nav class="nav">
+      <button onclick="scrollToId('game')">Mission</button>
+      <button onclick="scrollToId('leaderboard')">Leaderboard</button>
+      <button onclick="showHow()">How to Play</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="heroText">
+      <div class="kicker">Digital Treasure Hunt // Protocol 01</div>
+      <h1>CYPHER-X</h1>
+      <div class="tag">THINKING BEYOND CODE</div>
+      <p>Four minds. Ten logical trials. One real-world treasure. Solve the digital investigation, connect the evidence, then leave the screen and find what the clues are pointing to.</p>
+      <button class="btn" onclick="document.getElementById('teamSetup').scrollIntoView({behavior:'smooth'})">Enter The Hunt</button>
+    </div>
+    <div class="cyber-scene" aria-label="cyberpunk scene">
+      <div class="beam"></div><div class="glitch"></div>
+      <div class="city"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="team"><div class="person"></div><div class="person"></div><div class="person"></div><div class="person"></div></div>
+    </div>
+  </section>
+
+  <section class="grid" id="teamSetup">
+    <div class="panel setup">
+      <h2 class="title">Team Setup</h2>
+      <div class="inputs">
+        <label>Player 1<input id="p1" placeholder="Enter name"></label>
+        <label>Player 2<input id="p2" placeholder="Enter name"></label>
+        <label>Player 3<input id="p3" placeholder="Enter name"></label>
+        <label>Player 4<input id="p4" placeholder="Enter name"></label>
+        <label>Team Name<input id="teamName" placeholder="Enter team name"></label>
+      </div>
+      <br><button class="btn" onclick="startGame()">Start Mission</button>
+    </div>
+    <div class="panel brief">
+      <h2 class="title">Mission Briefing</h2>
+      <p>You are not hackers. You are thinkers, investigators and explorers.</p>
+      <p>Solve the 10 digital puzzles. Every answer becomes <b>evidence</b>. Do not expect a GPS pin or a direct instruction.</p>
+      <p>When the digital section ends, connect the clues and search the real world.</p>
+      <div class="center bigTimer">TIME LIMIT: 60:00</div>
+    </div>
+    <div class="panel rules">
+      <h2 class="title">How To Play</h2>
+      <ul>
+        <li>Team contains exactly 4 people.</li>
+        <li>No hacking. No source-code tricks.</li>
+        <li>Use logic, observation and teamwork.</li>
+        <li>Hints cost score.</li>
+        <li>The final answer is physical, not digital.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="gameHead">
+      <div><h2 class="title" id="missionTitle">Mission 01</h2><div id="teamDisplay"></div></div>
+      <div class="stats">
+        <div class="stat">TIME <b id="timer">60:00</b></div>
+        <div class="stat">SCORE <b id="score">10000</b></div>
+        <div class="stat">CLUES <b id="clueCount">0/10</b></div>
+      </div>
+    </div>
+
+    <div class="gameGrid">
+      <div class="panel">
+        <h2 class="title" id="qTitle">Puzzle 01</h2>
+        <div id="question" class="question"></div>
+        <div id="options" class="options"></div>
+        <div class="answer">
+          <input id="answerInput" placeholder="Type your answer..." autocomplete="off">
+          <button class="btn" onclick="submitAnswer()">Submit</button>
+        </div>
+        <div class="hints">
+          <button class="btn" onclick="useHint(0)">Hint 1 (-100)</button>
+          <button class="btn" onclick="useHint(1)">Hint 2 (-250)</button>
+        </div>
+        <div id="hintArea"></div>
+        <div id="feedback"></div>
+      </div>
+
+      <aside>
+        <div class="panel">
+          <h2 class="title">Clue Board</h2>
+          <div id="clues" class="clues"></div>
+        </div>
+        <br>
+        <div class="panel">
+          <h2 class="title">Team Chat</h2>
+          <div id="chat" class="chat"></div>
+          <div class="answer"><input id="chatInput" placeholder="Type message..." onkeydown="if(event.key==='Enter')sendChat()"><button class="btn" onclick="sendChat()">Send</button></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="panel final" id="finalPanel">
+      <div class="finalBox locked" id="finalBox">
+        <h2>FINAL MISSION</h2>
+        <p>You have not earned enough evidence yet.</p>
+        <p>Complete all 10 digital trials to unlock the real-world investigation.</p>
+        <button class="btn" onclick="openAnalysis()">Analysis Mode</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="leaderboard" class="panel hidden" style="margin-top:14px">
+    <h2 class="title">Local Leaderboard</h2>
+    <div id="leaderboardRows"></div>
+  </section>
+
+  <footer>CYPHER-X // THINKING BEYOND CODE</footer>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const puzzles = [
+ {title:"തുടക്കം", q:"എനിക്ക് നഗരങ്ങളുണ്ട്, പക്ഷേ വീടുകളില്ല. എനിക്ക് കാടുകളുണ്ട്, പക്ഷേ മരങ്ങളില്ല. എനിക്ക് നദികളുണ്ട്, പക്ഷേ വെള്ളമില്ല. ഞാൻ എന്താണ്?", answer:["map"], clue:"MAP", hints:["എന്നെ നിങ്ങളുടെ കയ്യിൽ പിടിക്കാം.","നിധി എവിടെയാണെന്ന് കാണിച്ചുതരാം, പക്ഷേ നിധി തന്നെ കാണിക്കില്ല."]},
+ {title:"നിശ്ശബ്ദ സാക്ഷി", q:"എനിക്ക് വായില്ല, പക്ഷേ ഞാൻ സംസാരിക്കും. എനിക്ക് ചെവികളില്ല, പക്ഷേ ഞാൻ കേൾക്കും. എനിക്ക് ശരീരമില്ല, പക്ഷേ കാറ്റിനൊപ്പം ഞാൻ ജീവൻ നേടും. ഞാൻ എന്താണ്?", answer:["echo"], clue:"ECHO", hints:["നിങ്ങളുടെ ശബ്ദത്തിന് എന്നെ സൃഷ്ടിക്കാനാകും.","നിങ്ങൾ നൽകുന്നതിനെ ഞാൻ തിരികെ നൽകും."]},
+ {title:"ഘടികാരം", q:"ഒരു ഘടികാരത്തിൽ സമയം 3:15 ആണ്. യഥാർത്ഥ ഘടികാരത്തിലേക്ക് നോക്കാതെ, മിനിറ്റ് സൂചി ഏത് അക്കത്തെയാണ് ചൂണ്ടുന്നത്? ആ സംഖ്യയിൽ നിന്ന് അക്ഷരമാലയിൽ 3 പടി മുന്നോട്ട് പോയാൽ ഏത് അക്ഷരം ലഭിക്കും?", answer:["f"], clue:"F", hints:["കണക്കാക്കേണ്ടത് മണിക്കൂർ സൂചിയല്ല.","3-ൽ നിന്ന് അക്ഷരമാലയിൽ 3 പടി മുന്നോട്ട് പോകൂ."]},
+ {title:"നാല് അന്വേഷണകർ", q:"നാല് അന്വേഷണകർ രാത്രിയിൽ ഒരു പാലം കടക്കണം. അവരുടെ കൈയിൽ ഒരു ടോർച്ച് മാത്രമേയുള്ളൂ. ഒരേസമയം പരമാവധി രണ്ടുപേർക്ക് മാത്രമേ കടക്കാൻ കഴിയൂ. എല്ലാവരും പാലം കടക്കണം. അവരുടെ സമയങ്ങൾ 1, 2, 7, 10 മിനിറ്റുകളാണ്. എല്ലാവരെയും മറുകരയിലെത്തിക്കാൻ വേണ്ട ഏറ്റവും കുറഞ്ഞ സമയം എത്ര?", answer:["17","17 minutes"], clue:"17", hints:["ടോർച്ച് വേഗത്തിൽ നടക്കുന്നയാൾ തിരികെ കൊണ്ടുവരാം.","1 & 2 കടക്കുക, 1 തിരികെ വരുക, 7 & 10 കടക്കുക, 2 തിരികെ വരുക, വീണ്ടും 1 & 2 കടക്കുക."]},
+ {title:"തകർന്ന സന്ദേശം", q:"തകർന്ന സന്ദേശം പൂർത്തിയാക്കുക: T H E / R E A / S U R / E. ഇതിൽ ഒളിഞ്ഞിരിക്കുന്ന ഒരൊറ്റ വാക്ക് ഏതാണ്?", answer:["treasure"], clue:"SPACE", hints:["കാണുന്ന അക്ഷരങ്ങളോടൊപ്പം കാണാത്ത ഇടവും ശ്രദ്ധിക്കുക.","നിങ്ങൾ അന്വേഷിക്കുന്ന വസ്തുവിന്റെ പേരാണ് ഉത്തരം."]},
+ {title:"മൂന്ന് പെട്ടികൾ", q:"താഴെയുള്ള പ്രസ്താവനകളിൽ ഒന്ന് മാത്രം ശരിയാണ്. A: നിധി A പെട്ടിയിലാണ്. B: നിധി A പെട്ടിയിലല്ല. C: നിധി B പെട്ടിയിലല്ല. നിധി ഏത് പെട്ടിയിലാണ്?", answer:["b","box b","boxb"], clue:"B", hints:["ഓരോ പെട്ടിയും പരീക്ഷിച്ച് എത്ര പ്രസ്താവനകൾ ശരിയാകുന്നു എന്ന് നോക്കൂ.","കൃത്യമായി ഒരു പ്രസ്താവന മാത്രം ശരിയായിരിക്കണം."]},
+ {title:"നമ്പർ ലോക്ക്", q:"2 → 6, 3 → 12, 4 → 20, 5 → 30, 6 → ? സംഖ്യകളിലെ മാതൃക കണ്ടെത്തി ? ന് പകരം വരേണ്ട സംഖ്യ കണ്ടെത്തുക.", answer:["42"], clue:"42", hints:["n എന്ന സംഖ്യയെ അതിന്റെ അടുത്ത സംഖ്യ കൊണ്ട് ഗുണിച്ച് നോക്കൂ.","6 × 7 എത്രയാണ്?"]},
+ {title:"അദൃശ്യ പാത", q:"ഈ ഗ്രിഡിൽ START മുതൽ TREASURE വരെ തുറന്ന വഴിയിലൂടെ സഞ്ചരിക്കുക: S █ █ █ █ / . . . █ █ / █ . █ . █ / █ . . . . / █ █ █ █ T. → എന്ന നീക്കത്തിന് 1 എന്നും ↓ എന്ന നീക്കത്തിന് 2 എന്നും നൽകുക. ലഭിക്കുന്ന കോഡ് ഏതാണ്?", answer:["11221211"], clue:"11221211", hints:["തുറന്ന സെല്ലുകൾ മാത്രം ചേർത്ത് പാത കണ്ടെത്തുക.","ഓരോ നീക്കവും ക്രമത്തിൽ രേഖപ്പെടുത്തുക."]},
+ {title:"പാത", q:"നിങ്ങൾ എത്ര കൂടുതൽ എടുത്തുകൊണ്ടുപോകുന്നുവോ, അത്രയും കൂടുതൽ പിന്നിൽ അവശേഷിപ്പിക്കുന്നു. അത് എന്താണ്?", answer:["footsteps","footstep","steps"], clue:"FOOTSTEPS", hints:["നിങ്ങൾ നടക്കുമ്പോഴെല്ലാം ഇത് ഉണ്ടാകുന്നു.","മഷിയില്ലാതെയും ഒരു പാത ഉണ്ടാക്കാം."]},
+ {title:"അവസാന ബന്ധം", q:"ഈ സൂചനകൾ ഒരു വലിയ യഥാർത്ഥ ലോക നിർദ്ദേശത്തിന്റെ ഭാഗങ്ങളാണ്: MAP • ECHO • F • 17 • SPACE • B • 42 • 11221211 • FOOTSTEPS. ഇനി നിങ്ങളുടെ ടീം എന്ത് ചെയ്യണം?", answer:["connect","connect the clues","think","find the location"], clue:"CONNECT", hints:["സ്ക്രീനിൽ നേരിട്ട് ഒരു ഉത്തരം അന്വേഷിക്കേണ്ടതില്ല.","സൂചനകൾ തമ്മിൽ ബന്ധിപ്പിച്ച് ചുറ്റുപാടുകൾ പരിശോധിക്കുകയാണ് ഇനി നിങ്ങളുടെ ജോലി."]}
+];
+
+let state={started:false,index:0,score:10000,clues:[],hintUsed:[],seconds:3600,team:"",players:[],timer:null,finished:false};
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function scrollToId(id){document.getElementById(id).scrollIntoView({behavior:"smooth"})}
+function startGame(){
+  const ids=["p1","p2","p3","p4","teamName"];
+  const vals=ids.map(id=>document.getElementById(id).value.trim());
+  if(vals.some(v=>!v)){toast("Enter all 4 player names and a team name.");return}
+  state.started=true; state.index=0; state.score=10000; state.clues=[]; state.hintUsed=[]; state.seconds=3600; state.team=vals[4]; state.players=vals.slice(0,4);
+  document.getElementById("game").classList.remove("hidden");
+  document.getElementById("teamSetup").classList.add("hidden");
+  document.getElementById("teamDisplay").innerHTML="<b>"+esc(state.team)+"</b> — "+state.players.map(esc).join(" • ");
+  renderPuzzle(); startTimer(); addChat("SYSTEM","Mission started. Four minds connected.");
+  scrollToId("game");
+}
+function startTimer(){
+ clearInterval(state.timer);
+ state.timer=setInterval(()=>{
+   if(state.seconds<=0){clearInterval(state.timer);toast("TIME EXPIRED.");return}
+   state.seconds--; renderTimer();
+ },1000);
+}
+function renderTimer(){let m=Math.floor(state.seconds/60),s=state.seconds%60;document.getElementById("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
+function renderPuzzle(){
+ const p=puzzles[state.index];
+ document.getElementById("missionTitle").textContent="Mission "+String(state.index+1).padStart(2,"0");
+ document.getElementById("qTitle").textContent="Puzzle "+String(state.index+1).padStart(2,"0")+" // "+p.title;
+ document.getElementById("question").textContent=p.q.replace(/\\n/g," ");
+ document.getElementById("answerInput").value="";
+ document.getElementById("feedback").innerHTML="";
+ document.getElementById("hintArea").innerHTML="";
+ document.getElementById("options").innerHTML="";
+ document.getElementById("clueCount").textContent=state.clues.length+"/10";
+ renderClues();
+}
+function normalize(v){return v.toLowerCase().trim().replace(/[^\w\s]/g,"").replace(/\s+/g," ")}
+function submitAnswer(){
+ if(!state.started||state.finished)return;
+ const p=puzzles[state.index], v=normalize(document.getElementById("answerInput").value);
+ if(!v)return;
+ if(p.answer.some(a=>normalize(a)===v)){
+   document.getElementById("feedback").innerHTML='<p class="success">✓ CORRECT — EVIDENCE RECOVERED: '+esc(p.clue)+'</p>';
+   if(!state.clues.includes(p.clue))state.clues.push(p.clue);
+   document.getElementById("score").textContent=state.score;
+   renderClues();
+   addChat("SYSTEM","Puzzle "+(state.index+1)+" solved. Clue stored.");
+   setTimeout(()=>{
+     if(state.index<puzzles.length-1){state.index++;renderPuzzle()}
+     else finishDigital();
+   },900);
+ }else{
+   state.score=Math.max(0,state.score-50);document.getElementById("score").textContent=state.score;
+   document.getElementById("feedback").innerHTML='<p class="error">✕ Not accepted. Think again.</p>';
+ }
+}
+function useHint(n){
+ const p=puzzles[state.index];
+ if(state.hintUsed.includes(state.index+"-"+n)){toast("Hint already used.");return}
+ state.hintUsed.push(state.index+"-"+n);
+ const cost=n===0?100:250;state.score=Math.max(0,state.score-cost);
+ document.getElementById("score").textContent=state.score;
+ document.getElementById("hintArea").innerHTML+='<div class="hintBox"><b>HINT '+(n+1)+"</b> — "+esc(p.hints[n])+"</div>";
+ addChat("SYSTEM","Hint "+(n+1)+" used. -"+cost+" points.");
+}
+function renderClues(){
+ const el=document.getElementById("clues");el.innerHTML="";
+ for(let i=0;i<10;i++){
+   const c=state.clues[i];
+   el.innerHTML+=`<div class="clue ${c?'done':''}"><small>${String(i+1).padStart(2,"0")}</small><strong>${c?esc(c):"?"}</strong></div>`;
+ }
+}
+function finishDigital(){
+ clearInterval(state.timer);state.finished=true;
+ document.getElementById("finalBox").classList.remove("locked");
+ document.getElementById("finalBox").innerHTML=`
+ <h2>THE DIGITAL HUNT IS COMPLETE</h2>
+ <p>You have all 10 pieces of evidence.</p>
+ <div class="finalClues">${state.clues.map((c,i)=>String(i+1).padStart(2,"0")+" → "+esc(c)).join("<br>")}</div>
+ <p><b>None of these clues is a GPS pin.</b><br>The treasure is now in the real world.</p>
+ <button class="btn" onclick="openAnalysis()">Open Final Investigation</button>`;
+ addChat("SYSTEM","Digital section complete. Leave the screen and think.");
+ toast("DIGITAL HUNT COMPLETE");
+ saveScore();
+}
+function openAnalysis(){
+ const box=document.getElementById("finalBox");
+ box.classList.remove("locked");
+ box.innerHTML=`
+ <h2>FINAL INVESTIGATION</h2>
+ <p>Your evidence:</p>
+ <div class="finalClues">${state.clues.map(esc).join(" • ")}</div>
+ <p style="max-width:760px;margin:20px auto;font-size:20px">
+ The website will not reveal the location. Combine the clues, inspect your surroundings,
+ discuss what they could describe, and find the physical treasure.
+ </p>
+ <p><b>REAL-WORLD RULE:</b> Do not damage, climb, dig, trespass, or enter unsafe areas. The organizer should place the treasure somewhere accessible and safe.</p>
+ <button class="btn" onclick="claimTreasure()">We Found The Treasure</button>`;
+}
+function claimTreasure(){
+ const code=prompt("Enter the physical treasure's final verification code:");
+ if(code&&normalize(code)==="cypherx"){clearInterval(state.timer);toast("TREASURE VERIFIED — VICTORY!");showVictory()}
+ else if(code!==null)toast("Verification failed. Keep investigating.");
+}
+function showVictory(){
+ document.getElementById("finalBox").innerHTML=`<div class="finalBox"><h2 class="success">TREASURE FOUND</h2><p>Team <b>${esc(state.team)}</b> completed CYPHER-X.</p><p>Final score: <b>${state.score}</b></p><p>Remember: THINKING BEYOND CODE.</p></div>`;
+ saveScore();
+}
+function addChat(name,msg){
+ const el=document.getElementById("chat");el.innerHTML+=`<p><span>${esc(name)}:</span> ${esc(msg)}</p>`;el.scrollTop=el.scrollHeight;
+}
+function sendChat(){
+ const input=document.getElementById("chatInput"),v=input.value.trim();if(!v)return;
+ addChat(state.players[0]||"PLAYER",v);input.value="";
+}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display="none",2600)}
+function showHow(){alert("CYPHER-X is a digital-to-physical treasure hunt. Four players solve 10 logic puzzles. Each correct answer becomes evidence. After puzzle 10, the website stops giving directions: the team must connect the clues and find the real-world treasure placed by the organizer. Hints and wrong answers reduce score.")}
+function saveScore(){
+ let rows=JSON.parse(localStorage.getItem("cypherxScores")||"[]");
+ rows.push({team:state.team,score:state.score,date:new Date().toLocaleString()});
+ rows.sort((a,b)=>b.score-a.score);localStorage.setItem("cypherxScores",JSON.stringify(rows.slice(0,10)));renderLeaderboard();
+}
+function renderLeaderboard(){
+ const rows=JSON.parse(localStorage.getItem("cypherxScores")||"[]");
+ document.getElementById("leaderboardRows").innerHTML=rows.length?rows.map((r,i)=>`<p>${i+1}. <b>${esc(r.team)}</b> — ${r.score} XP</p>`).join(""):"No completed teams yet.";
+}
+renderLeaderboard();
+</script>
+</body>
+</html>
