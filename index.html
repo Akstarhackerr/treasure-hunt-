@@ -49,7 +49,8 @@ h1{font-family:Orbitron;font-size:clamp(48px,7vw,100px);line-height:.9;margin:15
 .panel:after{content:"";position:absolute;top:-1px;left:15%;right:15%;height:1px;background:#d05cff;box-shadow:0 0 10px #d05cff}
 .title{font-family:Orbitron;color:#e8caff;letter-spacing:2px;text-transform:uppercase;margin:0 0 14px}
 .setup{grid-column:span 1}.brief{grid-column:span 1}.rules{grid-column:span 1}
-.inputs{display:grid;gap:8px}.inputs label{color:#aaa5c0;font-size:13px;text-transform:uppercase;letter-spacing:1px}.inputs input{background:#070613;border:1px solid #4d237e;color:white;padding:10px 12px;outline:none}.inputs input:focus{border-color:#e88cff;box-shadow:0 0 10px rgba(168,85,255,.25)}
+.inputs{display:grid;gap:10px}.inputs label{color:#aaa5c0;font-size:13px;text-transform:uppercase;letter-spacing:1px}.inputs input{width:100%;margin-top:5px;background:#070613;border:1px solid #4d237e;color:white;padding:10px 12px;outline:none}.inputs input:focus{border-color:#e88cff;box-shadow:0 0 10px rgba(168,85,255,.25)}
+.playerRow{display:flex;align-items:center;gap:8px}.playerRow label{flex:1}.playerTag{display:inline-block;color:#7ef9ff;font-family:Orbitron;font-size:10px;letter-spacing:1px;margin-bottom:2px}.addPlayerBtn{width:100%;min-height:48px;border:1px dashed #8a2cff;background:rgba(122,23,255,.08);color:#d9b9ff;font-family:Orbitron;text-transform:uppercase;letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:9px;transition:.2s}.addPlayerBtn:hover{border-color:#ff31d8;color:#fff;background:rgba(255,49,216,.08);box-shadow:0 0 18px rgba(168,85,255,.2)}.addIcon{font-size:24px;line-height:1;color:#7ef9ff}.playerCount{font-size:11px;color:#756e8e;letter-spacing:1px;text-align:right}
 .rules li{margin:9px 0;color:#d4d0e5}
 .center{text-align:center}.bigTimer{font-family:Orbitron;font-size:28px;color:#ff71df}
 #game{margin-top:18px}.gameHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.stats{display:flex;gap:12px;flex-wrap:wrap}.stat{border:1px solid #49217a;padding:8px 13px;background:#070511;font-family:Orbitron}.stat b{color:var(--cyan)}
@@ -116,14 +117,15 @@ footer{text-align:center;padding:35px;color:#756e8e;font-family:Orbitron;letter-
   <section class="grid" id="teamSetup">
     <div class="panel setup">
       <h2 class="title">Team Setup</h2>
-      <div class="inputs">
-        <label>Player 1<input id="p1" placeholder="Enter name"></label>
-        <label>Player 2<input id="p2" placeholder="Enter name"></label>
-        <label>Player 3<input id="p3" placeholder="Enter name"></label>
-        <label>Player 4<input id="p4" placeholder="Enter name"></label>
-        <label>Team Name<input id="teamName" placeholder="Enter team name"></label>
+      <div class="inputs" id="playerInputs">
+        <div class="playerRow" data-player="1">
+          <label><span class="playerTag">PLAYER 01</span><input id="p1" placeholder="Enter player name"></label>
+        </div>
+        <button type="button" class="addPlayerBtn" id="addPlayerBtn" onclick="addPlayer()"><span class="addIcon">＋</span><span>ADD PLAYER</span></button>
+        <div class="playerCount" id="playerCount">1 / 4 PLAYERS</div>
+        <label>TEAM NAME<input id="teamName" placeholder="Enter team name"></label>
       </div>
-      <br><button class="btn" onclick="startGame()">Start Mission</button>
+      <br><button type="button" class="btn" onclick="return startGame()">Start Mission</button>
     </div>
     <div class="panel brief">
       <h2 class="title">Mission Briefing</h2>
@@ -159,10 +161,10 @@ footer{text-align:center;padding:35px;color:#756e8e;font-family:Orbitron;letter-
         <h2 class="title" id="qTitle">Puzzle 01</h2>
         <div id="question" class="question"></div>
         <div id="options" class="options"></div>
-        <div class="answer">
-          <input id="answerInput" placeholder="Type your answer..." autocomplete="off">
-          <button class="btn" onclick="submitAnswer()">Submit</button>
-        </div>
+        <form class="answer" id="answerForm">
+          <input id="answerInput" type="text" placeholder="Type your answer..." autocomplete="off" autocapitalize="none" spellcheck="false">
+          <button class="btn" id="submitBtn" type="submit">Submit</button>
+        </form>
         <div class="hints">
           <button class="btn" onclick="useHint(0)">Hint 1 (-100)</button>
           <button class="btn" onclick="useHint(1)">Hint 2 (-250)</button>
@@ -223,16 +225,64 @@ let state={started:false,index:0,score:10000,clues:[],hintUsed:[],seconds:3600,t
 
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function scrollToId(id){document.getElementById(id).scrollIntoView({behavior:"smooth"})}
+function addPlayer(){
+  const container=document.getElementById("playerInputs");
+  const addBtn=document.getElementById("addPlayerBtn");
+  const count=document.getElementById("playerCount");
+  if(!container || !addBtn) return false;
+  const rows=container.querySelectorAll(".playerRow");
+  const next=rows.length+1;
+  if(next>4){ toast("Team already has 4 players."); return false; }
+  const row=document.createElement("div");
+  row.className="playerRow";
+  row.dataset.player=String(next);
+  row.innerHTML='<label><span class="playerTag">PLAYER '+String(next).padStart(2,"0")+'</span><input id="p'+next+'" placeholder="Enter player name"></label>';
+  container.insertBefore(row,addBtn);
+  if(count) count.textContent=next+" / 4 PLAYERS";
+  if(next===4){ addBtn.innerHTML='<span class="addIcon">✓</span><span>4 PLAYERS ADDED</span>'; addBtn.disabled=true; addBtn.style.opacity=".5"; addBtn.style.cursor="not-allowed"; }
+  const input=row.querySelector("input");
+  if(input) input.focus();
+  return false;
+}
 function startGame(){
-  const ids=["p1","p2","p3","p4","teamName"];
-  const vals=ids.map(id=>document.getElementById(id).value.trim());
-  if(vals.some(v=>!v)){toast("Enter all 4 player names and a team name.");return}
-  state.started=true; state.index=0; state.score=10000; state.clues=[]; state.hintUsed=[]; state.seconds=3600; state.team=vals[4]; state.players=vals.slice(0,4);
-  document.getElementById("game").classList.remove("hidden");
-  document.getElementById("teamSetup").classList.add("hidden");
-  document.getElementById("teamDisplay").innerHTML="<b>"+esc(state.team)+"</b> — "+state.players.map(esc).join(" • ");
-  renderPuzzle(); startTimer(); addChat("SYSTEM","Mission started. Four minds connected.");
-  scrollToId("game");
+  try{
+    const ids=["p1","p2","p3","p4","teamName"];
+    const vals=ids.map(id=>{
+      const el=document.getElementById(id);
+      return el ? String(el.value||"").trim() : "";
+    });
+    if(vals.some(v=>!v)){
+      toast("Enter all 4 player names and a team name.");
+      return false;
+    }
+    state.started=true;
+    state.finished=false;
+    state.index=0;
+    state.score=10000;
+    state.clues=[];
+    state.hintUsed=[];
+    state.seconds=3600;
+    state.team=vals[4];
+    state.players=vals.slice(0,4);
+
+    const game=document.getElementById("game");
+    const setup=document.getElementById("teamSetup");
+    const display=document.getElementById("teamDisplay");
+    if(!game || !setup || !display) throw new Error("Game UI elements are missing");
+
+    game.classList.remove("hidden");
+    setup.classList.add("hidden");
+    display.innerHTML="<b>"+esc(state.team)+"</b> — "+state.players.map(esc).join(" • ");
+    renderPuzzle();
+    renderTimer();
+    startTimer();
+    addChat("SYSTEM","Mission started. Four minds connected.");
+    game.scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(err){
+    console.error("CYPHER-X start error:",err);
+    toast("Mission could not start. Please refresh and try again.");
+  }
+  return false;
 }
 function startTimer(){
  clearInterval(state.timer);
@@ -255,25 +305,46 @@ function renderPuzzle(){
  document.getElementById("answerInput").placeholder=language==="ml"?"നിങ്ങളുടെ ഉത്തരം ടൈപ്പ് ചെയ്യുക...":"Type your answer...";
  renderClues();
 }
-function normalize(v){return v.toLowerCase().trim().replace(/[^\w\s]/g,"").replace(/\s+/g," ")}
-function submitAnswer(){
- if(!state.started||state.finished)return;
- const p=puzzles[state.index], v=normalize(document.getElementById("answerInput").value);
- if(!v)return;
- if(p.answers.some(a=>normalize(a)===v)){
+function normalize(v){
+  return String(v ?? "")
+    .toLocaleLowerCase()
+    .normalize("NFKC")
+    .trim()
+    .replace(/[\u200B-\u200D\uFEFF]/gu,"")
+    .replace(/[.,!?;:()[\]{}\-]/gu," ")
+    .replace(/\s+/gu," ");
+}
+function submitAnswer(event){
+ if(event) event.preventDefault();
+ if(!state.started||state.finished)return false;
+ const input=document.getElementById("answerInput");
+ const btn=document.getElementById("submitBtn");
+ const p=puzzles[state.index];
+ const v=normalize(input ? input.value : "");
+ if(!v){
+   toast(language==="ml"?"ഉത്തരം ടൈപ്പ് ചെയ്യുക.":"Please type an answer.");
+   if(input) input.focus();
+   return false;
+ }
+ const accepted=(p[language] && p[language].answers) ? p[language].answers : (p.en.answers || []);
+ if(accepted.some(a=>normalize(a)===v)){
+   if(btn) btn.disabled=true;
    document.getElementById("feedback").innerHTML='<p class="success">✓ CORRECT — EVIDENCE RECOVERED: '+esc(p.clue)+'</p>';
    if(!state.clues.includes(p.clue))state.clues.push(p.clue);
    document.getElementById("score").textContent=state.score;
    renderClues();
    addChat("SYSTEM","Puzzle "+(state.index+1)+" solved. Clue stored.");
    setTimeout(()=>{
+     if(btn) btn.disabled=false;
      if(state.index<puzzles.length-1){state.index++;renderPuzzle()}
      else finishDigital();
    },900);
  }else{
    state.score=Math.max(0,state.score-50);document.getElementById("score").textContent=state.score;
    document.getElementById("feedback").innerHTML='<p class="error">✕ Not accepted. Think again.</p>';
+   if(input){ input.focus(); input.select(); }
  }
+ return false;
 }
 function useHint(n){
  const p=puzzles[state.index], t=p[language];
@@ -348,6 +419,14 @@ function renderLeaderboard(){
  document.getElementById("leaderboardRows").innerHTML=rows.length?rows.map((r,i)=>`<p>${i+1}. <b>${esc(r.team)}</b> — ${r.score} XP</p>`).join(""):"No completed teams yet.";
 }
 renderLeaderboard();
+
+// Reliable button wiring: avoids browser/inline-form handler issues.
+document.addEventListener("DOMContentLoaded", function(){
+  const form=document.getElementById("answerForm");
+  const start=document.getElementById("startMissionBtn");
+  if(form) form.addEventListener("submit", submitAnswer);
+  if(start) start.addEventListener("click", function(e){ e.preventDefault(); startGame(); });
+});
 </script>
 </body>
 </html>
